@@ -8,5 +8,5 @@ module.exports = {
     GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
     CLERK_WEBHOOK_SECRET: process.env.CLERK_WEBHOOK_SECRET,
     CLERK_FRONTEND_API_URL: process.env.CLERK_FRONTEND_API_URL,
-    // Add other secrets/configs as needed
+    RESUMEY_PRO_API_KEY: process.env.RESUMEY_PRO_API_KEY, // Only if using resumey.pro
 };

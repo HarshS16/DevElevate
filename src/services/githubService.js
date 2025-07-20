@@ -1,12 +1,12 @@
 const axios = require('axios');
 
-const GITHUB_API_BASE_URL = 'https://api.github.com';
+const GITHUB_API_BASE_URL = '[https://api.github.com](https://api.github.com)';
 
 // Exchanges GitHub code for an access token
 const getAccessToken = async (code, clientId, clientSecret) => {
     try {
         const response = await axios.post(
-            'https://github.com/login/oauth/access_token',
+            '[https://github.com/login/oauth/access_token](https://github.com/login/oauth/access_token)',
             {
                 client_id: clientId,
                 client_secret: clientSecret,
@@ -25,13 +25,17 @@ const getAccessToken = async (code, clientId, clientSecret) => {
     }
 };
 
-// Fetches user's public repositories
+// Fetches user's public and private repositories
 const getUserRepos = async (accessToken) => {
     try {
         const response = await axios.get(`${GITHUB_API_BASE_URL}/user/repos`, {
             headers: {
                 Authorization: `token ${accessToken}`,
             },
+            params: {
+                type: 'owner', // Get repos owned by the user (public and private)
+                per_page: 100 // Fetch more repos per page
+            }
         });
         return response.data.map(repo => ({
             id: repo.id,
@@ -44,6 +48,7 @@ const getUserRepos = async (accessToken) => {
             language: repo.language,
             updated_at: repo.updated_at,
             topics: repo.topics,
+            homepage: repo.homepage // Project live demo link
         }));
     } catch (error) {
         console.error('Error fetching GitHub repos:', error.response ? error.response.data : error.message);
@@ -75,7 +80,7 @@ const getUserProfile = async (accessToken) => {
 };
 
 // NOTE: Getting detailed contributions (like commit counts) often requires
-// GraphQL API or specific libraries, which is more complex. For MVP,
+// GitHub GraphQL API or specific libraries, which is more complex. For MVP,
 // we can stick to public repo stats or general profile info.
 // If you need contributions data beyond basic counts, look into GitHub GraphQL API.
 
