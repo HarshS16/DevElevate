@@ -6,7 +6,7 @@ const logger = require('../utils/logger'); // <--- CRITICAL FIX: ADD THIS LINE
 const genAI = new GoogleGenerativeAI(config.GEMINI_API_KEY);
 // Choose your model. 'gemini-pro' for general text, 'gemini-1.5-flash' for speed and large context, 'gemini-1.5-pro' for more complex reasoning.
 // For resume and cover letter, 1.5-flash or 1.5-pro are excellent due to context window.
-const textModel = genAI.getGenerativeModel({ model: 'gemini-pro' });
+const textModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 const longContextModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' }); // Good balance of cost/speed/context for resumes
 
 // Safety settings (adjust as needed for your application)
