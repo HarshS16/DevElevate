@@ -14,13 +14,16 @@
   "dependencies": {
     "@clerk/clerk-react": "^5.35.3",
     "@google/generative-ai": "^0.24.1",
+    "axios": "^1.10.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
     "express-validator": "^7.2.1",
+    "mammoth": "^1.9.1",
     "mongodb": "^6.17.0",
     "mongoose": "^8.16.4",
     "multer": "^2.0.2",
+    "pdf-parse": "^1.1.1",
     "svix": "^1.69.0"
   },
   "devDependencies": {
