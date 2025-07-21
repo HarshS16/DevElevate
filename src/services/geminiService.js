@@ -1,5 +1,7 @@
+
 const { GoogleGenerativeAI, HarmBlockThreshold, HarmCategory } = require('@google/generative-ai');
 const config = require('../config');
+const logger = require('../utils/logger'); // <--- CRITICAL FIX: ADD THIS LINE
 
 const genAI = new GoogleGenerativeAI(config.GEMINI_API_KEY);
 // Choose your model. 'gemini-pro' for general text, 'gemini-1.5-flash' for speed and large context, 'gemini-1.5-pro' for more complex reasoning.
@@ -43,7 +45,11 @@ const generateContent = async (prompt, model = textModel, temperature = 0.7) => 
         const response = await result.response;
         return response.text();
     } catch (error) {
-        console.error('Error generating content with Gemini:', error);
+        // Use the logger utility here
+        logger.error('Error generating content with Gemini:', {
+            message: error.message,
+            details: error.response ? error.response.promptFeedback : null
+        });
         // Check for specific error types (e.g., safety blocking)
         if (error.response && error.response.promptFeedback && error.response.promptFeedback.blockReason) {
             throw new Error(`Gemini content generation blocked: ${error.response.promptFeedback.blockReason}`);
@@ -127,7 +133,8 @@ const extractKeywordsFromJD = async (jobDescription) => {
         let cleanedJsonString = jsonString.replace(/```json\n?|\n?```/g, '').trim();
         return JSON.parse(cleanedJsonString);
     } catch (e) {
-        console.error('Failed to parse JSON from Gemini for JD keywords. Raw output:', jsonString, e);
+        // Use the logger utility here
+        logger.error('Failed to parse JSON from Gemini for JD keywords. Raw output:', jsonString, e);
         // Fallback to empty arrays if parsing fails
         return { keywords: [], requiredSkills: [], responsibilities: [] };
     }
@@ -138,7 +145,7 @@ module.exports = {
     generateCoverLetter,
     generatePortfolioProjectDescription,
     extractKeywordsFromJD,
-    // Expose longContextModel for direct use if needed for other specialized prompts
+    generateContent, // <--- This was confirmed to be present in previous checks.
     longContextModel,
     textModel
 };
