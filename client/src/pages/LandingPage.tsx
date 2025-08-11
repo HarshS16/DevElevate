@@ -176,7 +176,7 @@ import * as THREE from 'three'
 import {
   Rocket, Wand2, FileText, Github, Bot, Gauge,
   ArrowRight, Sparkles, Zap, Trophy, Users,
-  Star, CheckCircle, Play, X
+  Star, CheckCircle
 } from 'lucide-react'
 
 // Custom Button Component
@@ -360,7 +360,6 @@ const AnimatedCounter = ({ end, duration = 2000 }) => {
 }
 
 export default function LandingPage() {
-  const [isVideoOpen, setIsVideoOpen] = useState(false)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white overflow-x-hidden">
@@ -397,11 +396,6 @@ export default function LandingPage() {
                 Sign in
               </Button>
             </Link>
-            <Link to="/sign-up">
-              <Button size="sm" className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700">
-                Get Started
-              </Button>
-            </Link>
           </div>
         </div>
       </header>
@@ -431,23 +425,13 @@ export default function LandingPage() {
               and craft perfect cover letters with cutting-edge AI technology.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link to="/sign-up">
+            <div className="flex justify-center">
+              <Link to="/sign-in">
                 <Button size="lg" className="group bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 px-8 py-4 text-lg">
                   Start Building Free
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-
-              <Button 
-                variant="outline" 
-                size="lg" 
-                onClick={() => setIsVideoOpen(true)}
-                className="group border-white/30 text-white hover:bg-white/10 hover:border-white/50 px-8 py-4 text-lg"
-              >
-                <Play className="mr-2 w-5 h-5" />
-                Watch Demo
-              </Button>
             </div>
 
             <div className="flex justify-center items-center gap-8 text-sm text-gray-400">
@@ -705,31 +689,7 @@ export default function LandingPage() {
         </div>
       </footer>
 
-      {/* Video Modal */}
-      {isVideoOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
-          onClick={() => setIsVideoOpen(false)}
-        >
-          <div
-            className="relative bg-black rounded-2xl overflow-hidden max-w-4xl w-full mx-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setIsVideoOpen(false)}
-              className="absolute top-4 right-4 z-10 w-10 h-10 bg-black/50 hover:bg-black/80 rounded-full flex items-center justify-center text-white transition-colors"
-            >
-              <X className="w-6 h-6" />
-            </button>
-            <div className="aspect-video bg-gradient-to-br from-blue-900 to-purple-900 flex items-center justify-center">
-              <div className="text-center">
-                <Play className="w-16 h-16 text-white/60 mx-auto mb-4" />
-                <p className="text-white/80 text-lg">Demo video would play here</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+
     </div>
   )
 }
