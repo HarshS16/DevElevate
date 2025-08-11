@@ -1,6 +1,6 @@
 # DevElevate 
 
-An AI-powered web app for developers to polish resumes, auto-generate stunning portfolios, and craft smart cover letters powered by OpenAI. Connect your GitHub & LinkedIn, upload your resume, and unlock career-ready documents that truly represent your skills.
+An AI-powered web app for developers to polish resumes, auto-generate stunning portfolios, and craft smart cover letters powered by Gemini. Connect your GitHub & LinkedIn, upload your resume, and unlock career-ready documents that truly represent your skills.
 
 ## 🚀 Features
 
@@ -41,7 +41,7 @@ frontend/
 - **Clerk/Auth0** — seamless authentication
 - **Framer Motion** — smooth micro animations
 - **Axios** — API requests
-- **OpenAI** (via backend) — for generative AI features
+- **Gemini** (via backend) — for generative AI features
 
 ## 🛠 Getting Started
 
