@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
+import { useAuth } from '@clerk/clerk-react'
 import { api } from '../lib/api'
 import type { Portfolio } from '../types'
 
 export function usePortfolios() {
+  const { isLoaded, isSignedIn } = useAuth()
   const [portfolios, setPortfolios] = useState<Portfolio[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -68,8 +70,14 @@ export function usePortfolios() {
   }
 
   useEffect(() => {
-    fetchPortfolios()
-  }, [])
+    // Only fetch portfolios when Clerk is loaded and user is signed in
+    if (isLoaded && isSignedIn) {
+      fetchPortfolios()
+    } else if (isLoaded && !isSignedIn) {
+      // User is not signed in, stop loading
+      setLoading(false)
+    }
+  }, [isLoaded, isSignedIn])
 
   return {
     portfolios,

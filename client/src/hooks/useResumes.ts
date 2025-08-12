@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
+import { useAuth } from '@clerk/clerk-react'
 import { api } from '../lib/api'
 import type { Resume } from '../types'
 
 export function useResumes() {
+  const { isLoaded, isSignedIn } = useAuth()
   const [resumes, setResumes] = useState<Resume[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -90,8 +92,14 @@ export function useResumes() {
   }
 
   useEffect(() => {
-    fetchResumes()
-  }, [])
+    // Only fetch resumes when Clerk is loaded and user is signed in
+    if (isLoaded && isSignedIn) {
+      fetchResumes()
+    } else if (isLoaded && !isSignedIn) {
+      // User is not signed in, stop loading
+      setLoading(false)
+    }
+  }, [isLoaded, isSignedIn])
 
   return {
     resumes,
