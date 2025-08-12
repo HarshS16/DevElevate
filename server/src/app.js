@@ -59,15 +59,35 @@ const app = express();
 connectDB();
 
 // Middleware
-// --- MODIFIED CORS CONFIGURATION FOR PRODUCTION ---
-// Use dynamic origin from config (which gets it from .env)
+// --- CORS CONFIGURATION FOR PRODUCTION ---
+// Handle both with and without trailing slash
+const allowedOrigins = [
+    config.CLERK_FRONTEND_API_URL,
+    config.CLERK_FRONTEND_API_URL?.replace(/\/$/, ''), // Remove trailing slash
+    config.CLERK_FRONTEND_API_URL?.replace(/\/$/, '') + '/', // Add trailing slash
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:3002'
+].filter(Boolean).filter((url, index, arr) => arr.indexOf(url) === index); // Remove duplicates
+
 app.use(cors({
-    origin: config.CLERK_FRONTEND_API_URL, // Allow requests ONLY from this URL
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            console.log('CORS blocked origin:', origin);
+            console.log('Allowed origins:', allowedOrigins);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed HTTP methods
     allowedHeaders: ['Content-Type', 'Authorization', 'x-clerk-user-id'], // Allowed headers from frontend
     credentials: true // Allow cookies, authorization headers, etc.
 }));
-// --- END MODIFIED CORS CONFIGURATION ---
+// --- END CORS CONFIGURATION ---
 
 // --- CRITICAL FIX FOR WEBHOOK BODY PARSING ---
 // Apply express.json() conditionally, skipping the webhook route

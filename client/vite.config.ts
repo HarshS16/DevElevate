@@ -6,6 +6,16 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 3000,
+    proxy: {
+      '/api': {
+        target: 'https://develevate-52lh.onrender.com',
+        changeOrigin: true,
+        secure: true,
+        headers: {
+          'Origin': 'https://dev-elevate-eight.vercel.app'
+        }
+      }
+    }
   },
   build: {
     outDir: 'dist',
