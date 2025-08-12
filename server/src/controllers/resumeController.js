@@ -150,11 +150,6 @@ const enhanceResume = async (req, res, next) => {
 // Get all resumes for the authenticated user
 const getResumes = async (req, res, next) => {
     try {
-        // If user is a fallback object (not from database), return empty array
-        if (typeof req.user._id === 'string' && req.user._id === req.user.clerkId) {
-            return res.status(200).json([]);
-        }
-
         const resumes = await Resume.find({ userId: req.user._id }).sort({ createdAt: -1 });
         res.status(200).json(resumes);
     } catch (error) {

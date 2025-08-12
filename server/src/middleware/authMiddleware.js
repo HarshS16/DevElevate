@@ -62,20 +62,34 @@ const authenticateUser = async (req, res, next) => {
             // Use the user ID directly (legacy approach)
             let user = await User.findOne({ clerkId: userId });
             if (!user) {
-                console.log(`User with clerkId ${userId} not found in database (legacy header). Creating fallback user object.`);
+                console.log(`User with clerkId ${userId} not found in database (legacy header). Creating user in database.`);
 
-                // Create a fallback user object for immediate use
-                user = {
-                    _id: userId, // Use clerkId as temporary _id
-                    clerkId: userId,
-                    email: 'unknown@example.com',
-                    name: 'Unknown User',
-                    resumes: [],
-                    portfolios: [],
-                    coverLetters: [],
-                    createdAt: new Date(),
-                    updatedAt: new Date()
-                };
+                // Create the user in the database automatically
+                try {
+                    user = await User.create({
+                        clerkId: userId,
+                        email: 'unknown@example.com',
+                        name: 'Unknown User',
+                        resumes: [],
+                        portfolios: [],
+                        coverLetters: []
+                    });
+                    console.log(`User created in database (legacy): ${user.clerkId}`);
+                } catch (createError) {
+                    console.error('Error creating user in database (legacy):', createError);
+                    // If creation fails, use fallback object
+                    user = {
+                        _id: userId, // Use clerkId as temporary _id
+                        clerkId: userId,
+                        email: 'unknown@example.com',
+                        name: 'Unknown User',
+                        resumes: [],
+                        portfolios: [],
+                        coverLetters: [],
+                        createdAt: new Date(),
+                        updatedAt: new Date()
+                    };
+                }
             }
             req.user = user;
             return next();
@@ -99,22 +113,34 @@ const authenticateUser = async (req, res, next) => {
             // Find user in database
             let user = await User.findOne({ clerkId: userId });
             if (!user) {
-                console.log(`User with clerkId ${userId} not found in database. Creating fallback user object.`);
+                console.log(`User with clerkId ${userId} not found in database. Creating user in database.`);
 
-                // Create a fallback user object for immediate use
-                // In a production app, you might want to create the user in the database here
-                // or ensure webhooks are properly set up to sync users
-                user = {
-                    _id: userId, // Use clerkId as temporary _id
-                    clerkId: userId,
-                    email: payload.email || 'unknown@example.com',
-                    name: payload.name || 'Unknown User',
-                    resumes: [],
-                    portfolios: [],
-                    coverLetters: [],
-                    createdAt: new Date(),
-                    updatedAt: new Date()
-                };
+                // Create the user in the database automatically
+                try {
+                    user = await User.create({
+                        clerkId: userId,
+                        email: payload.email || 'unknown@example.com',
+                        name: payload.name || payload.given_name || payload.family_name || 'Unknown User',
+                        resumes: [],
+                        portfolios: [],
+                        coverLetters: []
+                    });
+                    console.log(`User created in database: ${user.clerkId}`);
+                } catch (createError) {
+                    console.error('Error creating user in database:', createError);
+                    // If creation fails, use fallback object
+                    user = {
+                        _id: userId, // Use clerkId as temporary _id
+                        clerkId: userId,
+                        email: payload.email || 'unknown@example.com',
+                        name: payload.name || 'Unknown User',
+                        resumes: [],
+                        portfolios: [],
+                        coverLetters: [],
+                        createdAt: new Date(),
+                        updatedAt: new Date()
+                    };
+                }
             }
 
             req.user = user;
