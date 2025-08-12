@@ -39,9 +39,17 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => response,
   (error) => {
+    // Only redirect on actual 401 responses, not network errors
     if (error.response?.status === 401) {
-      // Handle unauthorized access
-      window.location.href = '/sign-in'
+      // Don't redirect if we're already on auth pages
+      const currentPath = window.location.pathname
+      if (!currentPath.includes('/sign-in') && !currentPath.includes('/sign-up')) {
+        console.log('401 Unauthorized - redirecting to sign-in')
+        window.location.href = '/sign-in'
+      }
+    } else if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
+      // Don't redirect on network/CORS errors
+      console.error('Network error (likely CORS):', error.message)
     }
     return Promise.reject(error)
   }
