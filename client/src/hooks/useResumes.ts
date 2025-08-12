@@ -62,6 +62,33 @@ export function useResumes() {
     }
   }
 
+  const getResume = async (id: string) => {
+    try {
+      const response = await api.resumes.getById(id)
+      return response.data
+    } catch (err: any) {
+      throw new Error(err.response?.data?.message || 'Failed to get resume')
+    }
+  }
+
+  const generateCoverLetter = async (resumeId: string, jobDescription: string) => {
+    try {
+      const response = await api.ai.generateCoverLetter({ resumeId, jobDescription })
+      return response.data
+    } catch (err: any) {
+      throw new Error(err.response?.data?.message || 'Failed to generate cover letter')
+    }
+  }
+
+  const getATSScore = async (resumeId: string, jobDescription: string) => {
+    try {
+      const response = await api.ai.getATSScore({ resumeId, jobDescription })
+      return response.data
+    } catch (err: any) {
+      throw new Error(err.response?.data?.message || 'Failed to get ATS score')
+    }
+  }
+
   useEffect(() => {
     fetchResumes()
   }, [])
@@ -74,6 +101,9 @@ export function useResumes() {
     buildResume,
     enhanceResume,
     deleteResume,
+    getResume,
+    generateCoverLetter,
+    getATSScore,
     refetch: fetchResumes,
   }
 }

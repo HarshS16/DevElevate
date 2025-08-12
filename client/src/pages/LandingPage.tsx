@@ -596,9 +596,8 @@ export default function LandingPage() {
 
               <a href="#cta">
                 <Button
-                  variant="outline"
                   size="lg"
-                  className="border-white/30 text-white hover:bg-white/10 hover:border-white/50 px-12 py-6 text-xl"
+                  className="bg-white/10 backdrop-blur-sm border border-white/30 text-white hover:bg-white/20 hover:border-white/50 transition-all duration-200 px-12 py-6 text-xl"
                 >
                   View Pricing
                 </Button>

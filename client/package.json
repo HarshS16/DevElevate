@@ -21,6 +21,8 @@
   "dependencies": {
     "@clerk/clerk-react": "^5.40.0",
     "@hookform/resolvers": "^5.2.1",
+    "@react-three/drei": "^10.6.1",
+    "@react-three/fiber": "^9.3.0",
     "@types/react": "^19.1.9",
     "@types/react-dom": "^19.1.7",
     "axios": "^1.11.0",

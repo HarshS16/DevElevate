@@ -8,7 +8,11 @@ import { Dashboard } from './pages/Dashboard'
 import SignInPage from './pages/auth/SignInPage'
 import { SignUpPage } from './pages/auth/SignUpPage'
 import { ResumesPage } from './pages/resumes/ResumesPage'
+import { ResumeDetailPage } from './pages/resumes/ResumeDetailPage'
+import { ResumeBuilderPage } from './pages/resumes/ResumeBuilderPage'
 import { PortfoliosPage } from './pages/portfolios/PortfoliosPage'
+import { PortfolioDetailPage } from './pages/portfolios/PortfolioDetailPage'
+import { PortfolioGeneratorPage } from './pages/portfolios/PortfolioGeneratorPage'
 import { ProfilePage } from './pages/ProfilePage'
 
 // Get Clerk publishable key from environment variables
@@ -38,18 +42,52 @@ function App() {
               </ProtectedRoute>
             } />
             
-            <Route path="/resumes/*" element={
+            {/* Resume routes */}
+            <Route path="/resumes" element={
               <ProtectedRoute>
                 <Layout>
                   <ResumesPage />
                 </Layout>
               </ProtectedRoute>
             } />
-            
-            <Route path="/portfolios/*" element={
+
+            <Route path="/resumes/new" element={
+              <ProtectedRoute>
+                <Layout>
+                  <ResumeBuilderPage />
+                </Layout>
+              </ProtectedRoute>
+            } />
+
+            <Route path="/resumes/:id" element={
+              <ProtectedRoute>
+                <Layout>
+                  <ResumeDetailPage />
+                </Layout>
+              </ProtectedRoute>
+            } />
+
+            {/* Portfolio routes */}
+            <Route path="/portfolios" element={
               <ProtectedRoute>
                 <Layout>
                   <PortfoliosPage />
+                </Layout>
+              </ProtectedRoute>
+            } />
+
+            <Route path="/portfolios/new" element={
+              <ProtectedRoute>
+                <Layout>
+                  <PortfolioGeneratorPage />
+                </Layout>
+              </ProtectedRoute>
+            } />
+
+            <Route path="/portfolios/:id" element={
+              <ProtectedRoute>
+                <Layout>
+                  <PortfolioDetailPage />
                 </Layout>
               </ProtectedRoute>
             } />

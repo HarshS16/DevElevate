@@ -49,6 +49,24 @@ export function usePortfolios() {
     }
   }
 
+  const getPortfolio = async (id: string) => {
+    try {
+      const response = await api.portfolios.getById(id)
+      return response.data
+    } catch (err: any) {
+      throw new Error(err.response?.data?.message || 'Failed to get portfolio')
+    }
+  }
+
+  const getGitHubRepos = async () => {
+    try {
+      const response = await api.github.getRepos()
+      return response.data
+    } catch (err: any) {
+      throw new Error(err.response?.data?.message || 'Failed to fetch GitHub repositories')
+    }
+  }
+
   useEffect(() => {
     fetchPortfolios()
   }, [])
@@ -60,6 +78,8 @@ export function usePortfolios() {
     generatePortfolio,
     publishPortfolio,
     deletePortfolio,
+    getPortfolio,
+    getGitHubRepos,
     refetch: fetchPortfolios,
   }
 }
