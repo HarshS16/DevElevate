@@ -22,10 +22,15 @@ apiClient.interceptors.request.use(
       // Use Clerk global to get token without React hooks
       // @ts-expect-error Clerk is injected on window by ClerkProvider
       const token = await window.Clerk?.session?.getToken()
+      console.log('API Request - Clerk token:', token ? 'Token available' : 'No token')
+      console.log('API Request - URL:', config.url)
       if (token) {
         config.headers = config.headers || {}
         // @ts-ignore
         config.headers.Authorization = `Bearer ${token}`
+        console.log('API Request - Authorization header set')
+      } else {
+        console.log('API Request - No token available, request will be unauthenticated')
       }
     } catch (error) {
       console.error('Failed to get auth token:', error)
