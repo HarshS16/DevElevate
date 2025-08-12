@@ -259,6 +259,13 @@ const StatsCard = ({ icon: Icon, title, value, subtitle, color, delay = 0 }) => 
 export function Dashboard() {
   const navigate = useNavigate()
 
+  // Debug logging for dashboard
+  console.log('Dashboard component mounted')
+
+  useEffect(() => {
+    console.log('Dashboard useEffect - component fully loaded')
+  }, [])
+
   // Real hooks for data fetching
   const { resumes, loading: resumesLoading, error: resumesError, uploadResume, buildResume } = useResumes()
   const { portfolios, loading: portfoliosLoading, error: portfoliosError, generatePortfolio } = usePortfolios()

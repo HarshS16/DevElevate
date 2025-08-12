@@ -172,6 +172,7 @@
 
 import React, { useRef, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useAuth } from '@clerk/clerk-react'
 import * as THREE from 'three'
 import {
   Rocket, Wand2, FileText, Github, Bot, Gauge,
@@ -360,6 +361,18 @@ const AnimatedCounter = ({ end, duration = 2000 }) => {
 }
 
 export default function LandingPage() {
+  const { isSignedIn, isLoaded } = useAuth()
+
+  // Debug logging for landing page
+  console.log('LandingPage - isLoaded:', isLoaded, 'isSignedIn:', isSignedIn)
+
+  useEffect(() => {
+    console.log('LandingPage mounted - isLoaded:', isLoaded, 'isSignedIn:', isSignedIn)
+    // Don't auto-redirect from landing page - let users browse
+    // if (isLoaded && isSignedIn) {
+    //   console.log('LandingPage - User is signed in but staying on landing page')
+    // }
+  }, [isLoaded, isSignedIn])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white overflow-x-hidden">

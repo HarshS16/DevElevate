@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react'
-import { SignIn } from '@clerk/clerk-react'
+import { SignIn, useAuth } from '@clerk/clerk-react'
 import { Link } from 'react-router-dom'
 import * as THREE from 'three'
 import {
@@ -142,6 +142,30 @@ const ThreeScene = () => {
 }
 
 export default function SignInPage() {
+  const { isSignedIn, isLoaded } = useAuth()
+
+  // Debug logging for sign-in page
+  console.log('SignInPage - isLoaded:', isLoaded, 'isSignedIn:', isSignedIn)
+
+  useEffect(() => {
+    console.log('SignInPage mounted - isLoaded:', isLoaded, 'isSignedIn:', isSignedIn)
+    if (isLoaded && isSignedIn) {
+      console.log('SignInPage - User is already signed in, redirecting to dashboard')
+      window.location.href = '/dashboard'
+    }
+  }, [isLoaded, isSignedIn])
+
+  // If user is already signed in, show loading while redirecting
+  if (isLoaded && isSignedIn) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">Redirecting to dashboard...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white overflow-hidden">
@@ -208,7 +232,8 @@ export default function SignInPage() {
               {/* Clerk SignIn Component with Custom Styling */}
               <div className="clerk-signin-wrapper">
                 <SignIn
-                  redirectUrl="/dashboard"
+                  forceRedirectUrl="/dashboard"
+                  fallbackRedirectUrl="/dashboard"
                   appearance={{
                     elements: {
                       rootBox: 'w-full',
