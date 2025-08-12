@@ -382,6 +382,12 @@ const publishPortfolio = async (req, res, next) => {
 // Get all portfolios for the authenticated user
 const getPortfolios = async (req, res, next) => {
     try {
+        // If user is a fallback object (not from database), return empty array
+        if (typeof req.user._id === 'string' && req.user._id === req.user.clerkId) {
+            logger.info(`Fallback user ${req.user._id} - returning empty portfolios array.`);
+            return res.status(200).json([]);
+        }
+
         const portfolios = await Portfolio.find({ userId: req.user._id }).sort({ createdAt: -1 });
         logger.info(`Fetched ${portfolios.length} portfolios for user ${req.user._id}.`);
         res.status(200).json(portfolios);

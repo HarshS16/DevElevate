@@ -6,21 +6,30 @@ const CoverLetter = require('../models/CoverLetter');
 const getUserProfile = async (req, res, next) => {
     try {
         // req.user is populated by authenticateUser middleware
-        const userId = req.user._id;
+        const user = req.user;
 
-        // Populate related documents for a comprehensive profile view
-        const user = await User.findById(userId)
+        // If user is a fallback object (not from database), return it directly
+        if (typeof user._id === 'string' && user._id === user.clerkId) {
+            // This is a fallback user object, return it as-is
+            const userProfile = { ...user };
+            delete userProfile.githubAccessToken; // Remove sensitive token if present
+            return res.status(200).json(userProfile);
+        }
+
+        // Otherwise, it's a real database user, populate related documents
+        const userId = user._id;
+        const dbUser = await User.findById(userId)
             .populate('resumes')
             .populate('portfolios')
             .populate('coverLetters')
             .exec();
 
-        if (!user) {
+        if (!dbUser) {
             return res.status(404).json({ message: 'User profile not found.' });
         }
 
         // Remove sensitive data before sending to frontend
-        const userProfile = user.toObject(); // Convert Mongoose document to plain JS object
+        const userProfile = dbUser.toObject(); // Convert Mongoose document to plain JS object
         delete userProfile.githubAccessToken; // Remove sensitive token
 
         res.status(200).json(userProfile);
