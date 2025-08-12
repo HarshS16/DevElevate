@@ -12,7 +12,7 @@ export default defineConfig({
         changeOrigin: true,
         secure: true,
         headers: {
-          'Origin': 'https://dev-elevate-eight.vercel.app'
+          'Origin': 'https://dev-elevate-ma91.vercel.app'
         }
       }
     }

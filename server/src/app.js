@@ -65,6 +65,8 @@ const allowedOrigins = [
     config.CLERK_FRONTEND_API_URL,
     config.CLERK_FRONTEND_API_URL?.replace(/\/$/, ''), // Remove trailing slash
     config.CLERK_FRONTEND_API_URL?.replace(/\/$/, '') + '/', // Add trailing slash
+    'https://dev-elevate-ma91.vercel.app', // Production frontend
+    'https://dev-elevate-eight.vercel.app', // Alternative frontend URL
     'http://localhost:3000',
     'http://localhost:3001',
     'http://localhost:3002'
@@ -109,6 +111,16 @@ app.use((req, res, next) => {
 // Basic Route (for testing)
 app.get('/', (req, res) => {
     res.send('AI Resume Refiner Backend API is running!');
+});
+
+// Test endpoint for CORS and connectivity
+app.get('/api/test', (req, res) => {
+    res.json({
+        message: 'API is working!',
+        timestamp: new Date().toISOString(),
+        origin: req.get('Origin') || 'No origin header',
+        userAgent: req.get('User-Agent') || 'No user agent'
+    });
 });
 
 // Import and use routes
