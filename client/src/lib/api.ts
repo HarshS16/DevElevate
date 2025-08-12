@@ -44,8 +44,12 @@ apiClient.interceptors.response.use(
       // Don't redirect if we're already on auth pages
       const currentPath = window.location.pathname
       if (!currentPath.includes('/sign-in') && !currentPath.includes('/sign-up')) {
-        console.log('401 Unauthorized - redirecting to sign-in')
-        window.location.href = '/sign-in'
+        console.log('401 Unauthorized - user needs to sign in again')
+        // Instead of hard redirect, let the auth state management handle this
+        // The ProtectedRoute component will redirect when isSignedIn becomes false
+
+        // Optionally, you could dispatch a custom event that components can listen to
+        window.dispatchEvent(new CustomEvent('auth:unauthorized'))
       }
     } else if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
       // Don't redirect on network/CORS errors

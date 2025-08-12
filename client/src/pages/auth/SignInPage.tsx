@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { SignIn, useAuth } from '@clerk/clerk-react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import * as THREE from 'three'
 import {
   Sparkles, ArrowRight, User, ArrowLeft, CheckCircle
@@ -143,17 +143,26 @@ const ThreeScene = () => {
 
 export default function SignInPage() {
   const { isSignedIn, isLoaded } = useAuth()
+  const navigate = useNavigate()
+  const [hasRedirected, setHasRedirected] = useState(false)
 
   // Debug logging for sign-in page
-  console.log('SignInPage - isLoaded:', isLoaded, 'isSignedIn:', isSignedIn)
+  console.log('SignInPage - isLoaded:', isLoaded, 'isSignedIn:', isSignedIn, 'hasRedirected:', hasRedirected)
 
   useEffect(() => {
     console.log('SignInPage mounted - isLoaded:', isLoaded, 'isSignedIn:', isSignedIn)
-    if (isLoaded && isSignedIn) {
+
+    // Only redirect if loaded, signed in, and haven't already redirected
+    if (isLoaded && isSignedIn && !hasRedirected) {
       console.log('SignInPage - User is already signed in, redirecting to dashboard')
-      window.location.href = '/dashboard'
+      setHasRedirected(true)
+
+      // Add a small delay to prevent rapid redirects
+      setTimeout(() => {
+        navigate('/dashboard', { replace: true })
+      }, 100)
     }
-  }, [isLoaded, isSignedIn])
+  }, [isLoaded, isSignedIn, navigate, hasRedirected])
 
   // If user is already signed in, show loading while redirecting
   if (isLoaded && isSignedIn) {
@@ -162,6 +171,18 @@ export default function SignInPage() {
         <div className="text-center">
           <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-400">Redirecting to dashboard...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Show loading if Clerk is still loading
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading...</p>
         </div>
       </div>
     )

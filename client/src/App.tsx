@@ -3,6 +3,7 @@ import { ClerkProvider } from '@clerk/clerk-react'
 import { AuthProvider } from './contexts/AuthContext'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import { Layout } from './components/layout/Layout'
+import { EnvironmentDebug } from './components/debug/EnvironmentDebug'
 import LandingPage from './pages/LandingPage'
 import { Dashboard } from './pages/Dashboard'
 import SignInPage from './pages/auth/SignInPage'
@@ -100,6 +101,7 @@ function App() {
               </ProtectedRoute>
             } />
           </Routes>
+          <EnvironmentDebug />
         </Router>
       </AuthProvider>
     </ClerkProvider>

@@ -46,26 +46,85 @@ const verifyClerkWebhook = async (req, res, next) => {
 
 // Middleware to protect routes for authenticated users
 const authenticateUser = async (req, res, next) => {
-    // In a real scenario with Clerk, you would typically verify the Clerk session token
-    // (JWT) sent from the frontend in the Authorization header.
-    // Clerk's `@clerk/express` SDK provides specific middleware for this.
-    // For this boilerplate, we'll assume the frontend sends the Clerk userId
-    // in a custom header (e.g., 'x-clerk-user-id') for simplicity.
-    // REPLACE THIS WITH ACTUAL JWT VERIFICATION IN PRODUCTION.
-
-    const userId = req.headers['x-clerk-user-id']; // Example: Frontend sends Clerk userId
-
-    if (!userId) {
-        return res.status(401).json({ message: 'Authentication required. No user ID provided (x-clerk-user-id header missing).' });
-    }
-
     try {
-        const user = await User.findOne({ clerkId: userId });
-        if (!user) {
-            return res.status(404).json({ message: 'User not found in database. Please ensure user is synced via Clerk webhooks.' });
+        // Check for Authorization header with Bearer token (JWT from Clerk)
+        const authHeader = req.headers.authorization;
+
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            // Fallback: check for x-clerk-user-id header (for backward compatibility)
+            const userId = req.headers['x-clerk-user-id'];
+            if (!userId) {
+                return res.status(401).json({
+                    message: 'Authentication required. No valid token or user ID provided.'
+                });
+            }
+
+            // Use the user ID directly (legacy approach)
+            let user = await User.findOne({ clerkId: userId });
+            if (!user) {
+                console.log(`User with clerkId ${userId} not found in database (legacy header). Creating fallback user object.`);
+
+                // Create a fallback user object for immediate use
+                user = {
+                    _id: userId, // Use clerkId as temporary _id
+                    clerkId: userId,
+                    email: 'unknown@example.com',
+                    name: 'Unknown User',
+                    resumes: [],
+                    portfolios: [],
+                    coverLetters: [],
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                };
+            }
+            req.user = user;
+            return next();
         }
-        req.user = user; // Attach user object from DB to request
-        next();
+
+        // Extract JWT token from Authorization header
+        const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+
+        // For now, we'll decode the JWT without verification to get the user ID
+        // In production, you should verify the JWT signature using Clerk's public key
+        try {
+            const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+            const userId = payload.sub; // 'sub' claim contains the user ID in Clerk JWTs
+
+            if (!userId) {
+                return res.status(401).json({
+                    message: 'Invalid token: no user ID found.'
+                });
+            }
+
+            // Find user in database
+            let user = await User.findOne({ clerkId: userId });
+            if (!user) {
+                console.log(`User with clerkId ${userId} not found in database. Creating fallback user object.`);
+
+                // Create a fallback user object for immediate use
+                // In a production app, you might want to create the user in the database here
+                // or ensure webhooks are properly set up to sync users
+                user = {
+                    _id: userId, // Use clerkId as temporary _id
+                    clerkId: userId,
+                    email: payload.email || 'unknown@example.com',
+                    name: payload.name || 'Unknown User',
+                    resumes: [],
+                    portfolios: [],
+                    coverLetters: [],
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                };
+            }
+
+            req.user = user;
+            next();
+        } catch (jwtError) {
+            console.error('Error decoding JWT:', jwtError);
+            return res.status(401).json({
+                message: 'Invalid token format.'
+            });
+        }
     } catch (error) {
         console.error('Error authenticating user:', error);
         res.status(500).json({ message: 'Server error during authentication.' });
